@@ -38,6 +38,7 @@
 从这组结果看，`micro10` 这次编辑后的数值**略低于** baseline。
 
 如果你想直接看结构化结果表，可以参考 [experiment_results_20260607.md](./experiment_results_20260607.md)。
+如果你想看通过服务器同步脚本实时刷新的版本，可以看 [experiment_results_latest.md](./experiment_results_latest.md)。
 
 ## 目前能说什么，不能说什么
 
@@ -72,6 +73,7 @@
 5. 再决定后续应该继续扩大实验，还是把项目定位为“结果审慎但闭环完整”的研究工程案例。
 
 如果实验日志已经落盘，也可以使用仓库内的 `gredit-summarize-results` 命令自动抽取 `iid_ratio@10` 与 `ndcg@10`，避免继续手工整理结果表。
+如果日志仍在 `184` 服务器上，可以直接运行 `gredit-sync-server184-results`，把远端日志同步到本地并重建最新结果表。
 
 ## 对外阅读建议
 

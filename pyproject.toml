@@ -62,6 +62,7 @@ gredit-train = "rec_main:main"
 gredit-prepare = "prepare_edit_data:main"
 gredit-edit = "genrecedit.utils:genrecedit_main"
 gredit-summarize-results = "util.summarize_experiment_results:main"
+gredit-sync-server184-results = "util.sync_server184_results:main"
 
 [tool.setuptools]
 include-package-data = true

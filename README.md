@@ -89,6 +89,7 @@ GREdit/
 
 如果你想快速了解项目目前的实验进展与可公开表述边界，可以直接看 [docs/experiment_status.md](docs/experiment_status.md)。
 如果你已经拿到评估日志，也可以用 `gredit-summarize-results` 自动提取 `iid_ratio@10` 和 `ndcg@10`，生成统一结果表。
+如果日志还在 `184` 服务器上，也可以用 `gredit-sync-server184-results` 直接同步并重建最新结果表。
 
 ## 环境安装
 
@@ -121,6 +122,7 @@ pip install -e .
 - `gredit-prepare`
 - `gredit-edit`
 - `gredit-summarize-results`
+- `gredit-sync-server184-results`
 
 ## 当前支持的类别
 

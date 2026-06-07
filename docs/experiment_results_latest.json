@@ -1,0 +1,31 @@
+{
+  "result_count": 3,
+  "results": [
+    {
+      "label": "baseline",
+      "status": "ok",
+      "log_path": "C:\\Users\\grfpa\\GREdit\\tmp\\server184_eval_logs\\genrecedit_eval_baseline_test_20260607_small.log",
+      "iid_ratio@10": 0.6306354999542236,
+      "ndcg@10": 0.0022662023548036814
+    },
+    {
+      "label": "micro10",
+      "status": "ok",
+      "log_path": "C:\\Users\\grfpa\\GREdit\\tmp\\server184_eval_logs\\genrecedit_eval_micro10_test_20260607_small.log",
+      "iid_ratio@10": 0.6302555561065674,
+      "ndcg@10": 0.002245022216811776
+    },
+    {
+      "label": "aug10",
+      "status": "missing_log",
+      "log_path": "C:\\Users\\grfpa\\GREdit\\tmp\\server184_eval_logs\\genrecedit_eval_aug10_test_20260607_small.log",
+      "iid_ratio@10": null,
+      "ndcg@10": null
+    }
+  ],
+  "source": {
+    "ssh_target": "grf@172.31.233.184",
+    "ssh_port": 50805,
+    "remote_base": "/home/grf/GenRecEdit-main/outputs/logs"
+  }
+}
