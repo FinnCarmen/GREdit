@@ -93,6 +93,7 @@ GREdit/
 如果你想把最新结果进一步压缩成可直接转述的摘要，可以用 `gredit-build-experiment-summary`。
 如果你想知道正式 `aug10` 任务目前跑到了哪一步，可以用 `gredit-sync-server184-runtime` 把运行中状态同步下来。
 如果你想一步完成“同步结果 + 刷新摘要”，可以直接运行 `gredit-refresh-latest-reporting`。
+如果你想在 latest 文档有变化时自动提交并推送公开更新，可以运行 `gredit-publish-latest-reporting --push-remote agent-rec --push-remote origin`。
 
 ## 环境安装
 
@@ -129,6 +130,7 @@ pip install -e .
 - `gredit-build-experiment-summary`
 - `gredit-sync-server184-runtime`
 - `gredit-refresh-latest-reporting`
+- `gredit-publish-latest-reporting`
 
 ## 当前支持的类别
 

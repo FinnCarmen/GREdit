@@ -66,6 +66,7 @@ gredit-sync-server184-results = "util.sync_server184_results:main"
 gredit-build-experiment-summary = "util.build_experiment_summary:main"
 gredit-sync-server184-runtime = "util.sync_server184_runtime_status:main"
 gredit-refresh-latest-reporting = "util.refresh_latest_reporting:main"
+gredit-publish-latest-reporting = "util.publish_latest_reporting:main"
 
 [tool.setuptools]
 include-package-data = true

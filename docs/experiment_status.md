@@ -77,6 +77,7 @@
 如果想快速得到可直接写进汇报或 README 的一句话结论，可以再运行 `gredit-build-experiment-summary` 生成最新摘要。
 如果正式实验还在运行中，可以运行 `gredit-sync-server184-runtime` 把最新运行状态同步到本地文档。
 如果想一步完成这两件事，可以直接运行 `gredit-refresh-latest-reporting`。
+如果 latest 文档刷新后需要立即公开发布，可以再运行 `gredit-publish-latest-reporting --push-remote agent-rec --push-remote origin`。
 
 ## 对外阅读建议
 
