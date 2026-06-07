@@ -88,6 +88,7 @@ GREdit/
 - 因此目前**不能**声称已经优于 baseline，更不能直接声称优于论文方法
 
 如果你想快速了解项目目前的实验进展与可公开表述边界，可以直接看 [docs/experiment_status.md](docs/experiment_status.md)。
+如果你已经拿到评估日志，也可以用 `gredit-summarize-results` 自动提取 `iid_ratio@10` 和 `ndcg@10`，生成统一结果表。
 
 ## 环境安装
 
@@ -119,6 +120,7 @@ pip install -e .
 - `gredit-train`
 - `gredit-prepare`
 - `gredit-edit`
+- `gredit-summarize-results`
 
 ## 当前支持的类别
 

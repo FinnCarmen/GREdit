@@ -1,0 +1,26 @@
+{
+  "result_count": 3,
+  "results": [
+    {
+      "label": "baseline",
+      "status": "ok",
+      "log_path": "C:\\Users\\grfpa\\tmp\\gredit_eval_logs\\baseline.log",
+      "iid_ratio@10": 0.6306354999542236,
+      "ndcg@10": 0.0022662023548036814
+    },
+    {
+      "label": "micro10",
+      "status": "ok",
+      "log_path": "C:\\Users\\grfpa\\tmp\\gredit_eval_logs\\micro10.log",
+      "iid_ratio@10": 0.6302555561065674,
+      "ndcg@10": 0.002245022216811776
+    },
+    {
+      "label": "aug10",
+      "status": "missing_log",
+      "log_path": "C:\\Users\\grfpa\\tmp\\gredit_eval_logs\\aug10.log",
+      "iid_ratio@10": null,
+      "ndcg@10": null
+    }
+  ]
+}
