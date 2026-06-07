@@ -75,6 +75,7 @@
 如果实验日志已经落盘，也可以使用仓库内的 `gredit-summarize-results` 命令自动抽取 `iid_ratio@10` 与 `ndcg@10`，避免继续手工整理结果表。
 如果日志仍在 `184` 服务器上，可以直接运行 `gredit-sync-server184-results`，把远端日志同步到本地并重建最新结果表。
 如果想快速得到可直接写进汇报或 README 的一句话结论，可以再运行 `gredit-build-experiment-summary` 生成最新摘要。
+如果想一步完成这两件事，可以直接运行 `gredit-refresh-latest-reporting`。
 
 ## 对外阅读建议
 

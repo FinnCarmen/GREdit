@@ -91,6 +91,7 @@ GREdit/
 如果你已经拿到评估日志，也可以用 `gredit-summarize-results` 自动提取 `iid_ratio@10` 和 `ndcg@10`，生成统一结果表。
 如果日志还在 `184` 服务器上，也可以用 `gredit-sync-server184-results` 直接同步并重建最新结果表。
 如果你想把最新结果进一步压缩成可直接转述的摘要，可以用 `gredit-build-experiment-summary`。
+如果你想一步完成“同步结果 + 刷新摘要”，可以直接运行 `gredit-refresh-latest-reporting`。
 
 ## 环境安装
 
@@ -125,6 +126,7 @@ pip install -e .
 - `gredit-summarize-results`
 - `gredit-sync-server184-results`
 - `gredit-build-experiment-summary`
+- `gredit-refresh-latest-reporting`
 
 ## 当前支持的类别
 
