@@ -1,31 +1,36 @@
 # GREdit
 
-GREdit packages **GenRecEdit**, a model-editing workflow for **cold-start generative recommendation** built around the TIGER recommender. The repository is organized as a reproducible research codebase rather than a minimal library: it includes the base recommender, the edit algorithm, request generation utilities, and shell entrypoints for train, prepare, edit, and evaluate.
+GREdit 是一个面向**冷启动生成式推荐**的模型编辑项目。它围绕 TIGER 生成式推荐器构建，目标不是做一个轻量工具库，而是把一条完整、可复现、可解释的研究与工程链路整理成公开项目：
 
-The workflow is:
+1. 先训练基础生成式推荐模型；
+2. 再构造冷启动编辑请求；
+3. 然后求解模型编辑参数更新；
+4. 最后回到推荐任务上验证编辑后的效果。
 
-1. train a base TIGER recommender on an Amazon Reviews category,
-2. construct covariance and cold-start edit requests,
-3. solve GenRecEdit updates,
-4. re-run recommendation with the edited model and report metrics.
+如果把这个项目放在公开主页上，我希望它传达出的信号很明确：这不是只会“跑通一个脚本”的实验代码，而是一个把**问题定义、数据构造、训练入口、编辑过程、评估回路**都打包清楚的研究工程项目。
 
-## What This Repository Contains
+## 项目在做什么
 
-- `genrecedit/`: the GenRecEdit implementation, hyperparameters, covariance helpers, and CLI glue.
-- `genrec/`: the generative recommendation stack used as the editable backbone.
-- `prepare_edit_data.py`: reproducible request generation from cached TIGER data.
-- `rec_main.py`: training and evaluation entrypoint for the recommender.
-- `edit_main.py`: GenRecEdit entrypoint.
-- `Scripts/`: ready-to-run shell wrappers for the full pipeline.
-- `docs/data_preparation.md`: extra notes on request generation.
-- `data/`: expected directory layout for checkpoints and edit requests.
+传统推荐系统里的模型编辑，更多出现在参数量较小、目标较单一的设定里。GREdit 关注的是另一类问题：当推荐器本身已经是生成式模型时，能不能在不重新完整训练的前提下，对模型注入新的冷启动知识，并尽量保持原有推荐能力。
 
-## Repository Layout
+这个仓库对应的是一条 TIGER-based 的实现路径，核心包含三部分：
+
+- `genrec/`：生成式推荐主干，包括数据集、模型、训练与评估流程；
+- `genrecedit/`：GenRecEdit 的编辑算法实现，包括超参数、协方差缓存、模型封装与编辑入口；
+- `prepare_edit_data.py`：把原始推荐数据和缓存特征整理成可编辑请求的脚本。
+
+从公开展示角度看，这个项目的价值主要在三点：
+
+- 它把“模型编辑”真正落到了“生成式推荐”这个具体任务上；
+- 它不仅有算法代码，也有数据准备与复现实验入口；
+- 它保留了研究项目该有的工程结构，而不是把所有逻辑塞进 notebook。
+
+## 仓库结构
 
 ```text
 GREdit/
-├── CITATION.cff
 ├── README.md
+├── CITATION.cff
 ├── pyproject.toml
 ├── requirements.txt
 ├── rec_main.py
@@ -47,9 +52,35 @@ GREdit/
 └── notebooks/
 ```
 
-## Installation
+各部分职责可以概括为：
 
-### Option 1: Reproduce the original environment
+- `rec_main.py`：基础推荐模型训练与评估入口；
+- `edit_main.py`：模型编辑入口；
+- `prepare_edit_data.py`：编辑请求构造入口；
+- `Scripts/`：对完整流程做了一层可直接执行的封装；
+- `docs/`：补充解释数据准备与目录约定；
+- `notebooks/`：保留原始研究过程中的探索记录。
+
+## 适合谁看这个项目
+
+这个仓库主要适合三类读者：
+
+- 对推荐系统感兴趣，想看生成式推荐如何接入模型编辑的人；
+- 对研究工程化感兴趣，想看一个项目如何从实验代码整理为可公开仓库的人；
+- 面试或学术交流场景下，希望快速判断“作者是否真的做过完整闭环”的读者。
+
+如果你是面试官，我建议重点看三处：
+
+1. `prepare_edit_data.py`
+   这里体现了我如何把研究想法变成稳定的数据构造流程。
+2. `genrecedit/`
+   这里是项目的方法主体，体现了编辑算法与模型封装方式。
+3. `Scripts/`
+   这里体现了我是否考虑过复现路径、参数入口和多阶段串联。
+
+## 环境安装
+
+### 方式一：按原始实验环境安装
 
 ```bash
 conda create -n gredit python=3.10 -y
@@ -58,11 +89,11 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-`requirements.txt` is the closest match to the environment used in this packaged codebase and includes the CUDA 12.4 wheel index for PyTorch.
+这条路径最接近我打包这个项目时使用的环境，`requirements.txt` 中已经包含 PyTorch CUDA 12.4 相关索引配置。
 
-### Option 2: Install as a package
+### 方式二：作为 Python 项目安装
 
-If you prefer editable installs and CLI entrypoints:
+如果你更习惯可编辑安装和命令行入口，可以使用：
 
 ```bash
 conda create -n gredit python=3.10 -y
@@ -72,25 +103,25 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 pip install -e .
 ```
 
-This exposes:
+安装后可用的命令包括：
 
 - `gredit-train`
 - `gredit-prepare`
 - `gredit-edit`
 
-## Supported Categories
+## 当前支持的类别
 
-The open-source scripts are currently wired for the categories already reflected in the repository data layout:
+目前公开整理过、并在目录结构中直接体现的类别有：
 
 - `Video_Games`
 - `Cell_Phones_and_Accessories`
 - `Software`
 
-`prepare_edit_data.py` also contains defaults for a few additional Amazon Reviews categories, but only the three above are reflected in the packaged examples and shell scripts.
+`prepare_edit_data.py` 中还保留了其他 Amazon Reviews 2023 类别的一些默认配置，但公开版仓库主要围绕上述三个类别组织示例与脚本。
 
-## Expected Data Layout
+## 数据目录约定
 
-The repository assumes the following paths:
+仓库默认采用以下目录布局：
 
 ```text
 data/
@@ -108,52 +139,55 @@ data/
         └── edit_requests_cold_test_augmented_<n>.json
 ```
 
-Important points:
+这里需要特别说明三点：
 
-- full pretrained checkpoints are not bundled here;
-- processed TIGER caches are not bundled here;
-- generated logs and tensorboard outputs are ignored by git;
-- lightweight placeholder files may appear under `data/` to preserve the expected structure.
+- 仓库**不直接附带**真实的预训练权重；
+- 仓库**不直接附带**完整的处理后缓存；
+- `data/` 下保留的同名文件，很多只是为了说明路径结构的占位文件。
 
-See [data/README.md](data/README.md) for a short summary.
+也就是说，这个公开仓库的重点是**代码、流程和组织方式**，不是把大体积实验产物一股脑塞进 GitHub。
 
-## End-to-End Workflow
+详细说明见 [data/README.md](data/README.md)。
 
-### 1. Train the base recommender
+## 一条完整的运行流程
 
-Train TIGER for one category:
+### 第一步：训练基础推荐模型
+
+训练某个类别的 TIGER 模型：
 
 ```bash
 bash Scripts/rec_train.sh Video_Games
 ```
 
-Or with the package entrypoint:
+或者使用安装后的命令行入口：
 
 ```bash
 gredit-train --model TIGER --category Video_Games --max_rows 0.5
 ```
 
-The training stage is expected to produce:
+训练完成后，后续流程默认会读取：
 
 ```text
 data/ckpt/TIGER_Video_Games/genrec_default_ori.pth
 ```
 
-Category-dependent `max_rows` defaults inside `Scripts/rec_train.sh` are:
+脚本中预设的 `max_rows` 为：
 
-- `Video_Games`: `0.5`
-- `Cell_Phones_and_Accessories`: `0.1`
-- `Software`: `0.5`
+- `Video_Games`：`0.5`
+- `Cell_Phones_and_Accessories`：`0.1`
+- `Software`：`0.5`
 
-### 2. Prepare edit requests
+这个设计本质上是在复现成本与实验规模之间做折中，方便快速重跑而不必每次都拉满数据。
 
-Generate the covariance requests and cold-start augmented edit requests:
+### 第二步：构造编辑请求
+
+生成协方差样本和冷启动增强编辑请求：
 
 ```bash
 bash Scripts/prepare_data.sh Video_Games
 ```
 
-Or:
+或者直接执行：
 
 ```bash
 gredit-prepare \
@@ -164,42 +198,42 @@ gredit-prepare \
   --output_dir data/Edit/Video_Games
 ```
 
-This stage writes:
+这一阶段会生成：
 
 - `data/Edit/<category>/edit_requests_COV.json`
 - `data/Edit/<category>/edit_requests_cold_test_augmented_<number_per_item>.json`
 
-What the script does:
+从逻辑上看，这一步做了几件事：
 
-1. loads the processed TIGER dataset split,
-2. tokenizes the training split into covariance requests,
-3. detects target items from the requested split,
-4. uses `sentence-t5-base.sent_emb` to retrieve similar train items,
-5. rewrites train sequences to create cold-start edit cases,
-6. tokenizes the augmented examples into GenRecEdit request format.
+1. 读取 TIGER 已处理好的数据切分；
+2. 把训练样本转成协方差估计所需的请求格式；
+3. 找到目标测试切分中的冷启动物品；
+4. 读取 `sentence-t5-base.sent_emb` 做相似物品检索；
+5. 用相似训练物品替换历史位置，构造增强编辑样本；
+6. 再把这些样本编码成 GenRecEdit 使用的 JSON 请求。
 
-The request JSON entries contain:
+生成后的请求条目包含：
 
-- `history`: tokenized recommendation context
-- `target_sids`: target semantic IDs
-- `case_id`: string case identifier
+- `history`：推荐上下文的 token 序列；
+- `target_sids`：目标物品的语义 ID；
+- `case_id`：样本编号。
 
-### 3. Solve edits and evaluate
+### 第三步：执行编辑并回到推荐任务验证
 
-Run the edit pipeline:
+执行编辑流程：
 
 ```bash
 bash Scripts/edit.sh Video_Games
 ```
 
-By default the packaged script uses:
+当前公开脚本默认使用：
 
 - `EDIT_POSTFIXES=(cold_test_augmented)`
 - `COV_LAMBDAS=(1000)`
 - `NUMBER_KNOWLEDGES=(10)`
 - `POS2LAYER=(0 1 2 3)`
 
-These can be overridden from the environment:
+如果想从外部覆盖超参数，可以这样传：
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 \
@@ -209,35 +243,37 @@ POS2LAYER="0 1 2 3" \
 bash Scripts/edit.sh Video_Games
 ```
 
-The edit stage loads:
+这一阶段会读取：
 
 - `data/ckpt/TIGER_<category>/genrec_default_ori.pth`
 - `data/Edit/<category>/edit_requests_COV.json`
 - `data/Edit/<category>/edit_requests_cold_test_augmented_<n>.json`
 
-It writes learned updates under:
+并输出：
 
 ```text
 results/<category>/deltaW_edit_requests_cold_test_augmented_<cov_lambda>_<n>.pt
 ```
 
-Then it reloads the base checkpoint, applies the learned `deltaW`, and evaluates the edited recommender.
+随后脚本会重新加载基础模型、应用 `deltaW`，再回到推荐评估流程中查看编辑效果。
 
-## CLI Reference
+这也是我认为这个项目最像“完整工程闭环”的地方：编辑不是停留在一个中间结果文件上，而是要回到最终任务上接受检验。
+
+## 命令行入口说明
 
 ### `rec_main.py`
 
-Base training / evaluation entrypoint:
+基础训练与评估入口：
 
 ```bash
 python rec_main.py --model TIGER --category Video_Games --max_rows 0.5
 ```
 
-The script forwards unknown command-line flags to the GenRec configuration parser, so model-specific parameters can be injected from the command line.
+这个脚本会把未显式解析的参数继续传给 GenRec 的配置解析逻辑，因此适合做模型参数扩展或批量实验。
 
 ### `prepare_edit_data.py`
 
-Useful arguments:
+常用参数包括：
 
 - `--category`
 - `--cache_dir`
@@ -252,7 +288,7 @@ Useful arguments:
 - `--no_write_augmented`
 - `--save_tokenized_augmented`
 
-Example:
+示例：
 
 ```bash
 python prepare_edit_data.py \
@@ -266,7 +302,7 @@ python prepare_edit_data.py \
 
 ### `edit_main.py`
 
-Useful arguments:
+常用参数包括：
 
 - `--model_name`
 - `--pretrained_model_path`
@@ -280,7 +316,7 @@ Useful arguments:
 - `--cache_dir`
 - `--output_dir`
 
-Example:
+示例：
 
 ```bash
 python edit_main.py \
@@ -294,20 +330,21 @@ python edit_main.py \
   --pos2layer 0 1 2 3
 ```
 
-## Packaging Notes
+## 工程化整理时做过的处理
 
-This repository is now installable through `pyproject.toml`. The Python package includes:
+这个公开版不是简单把本地代码打包上传，而是做过一轮面向公开阅读的整理，主要包括：
 
-- `genrecedit`
-- `genrec`
-- `util`
-- packaged YAML configs under `genrec/`
+- 增加 `pyproject.toml`，支持 `pip install -e .`；
+- 补齐 `genrec/__init__.py`，让包结构更完整；
+- 修正训练脚本入口，使其直接调用 `rec_main.py`；
+- 让 `prepare_data.sh` 和 `edit.sh` 支持通过参数或环境变量切换类别与超参数；
+- 保留 `data/` 目录形状，但把无法公开分发的大文件替换为占位文件说明。
 
-That means downstream users can either run the shell scripts directly or install the project and invoke the CLI entrypoints from any working directory.
+这部分整理本身也体现了一种工程判断：公开仓库最重要的是**可理解、可安装、可定位、可继续开发**，而不是把所有历史产物原样搬上来。
 
-## Outputs
+## 输出内容
 
-Typical generated artifacts:
+典型输出包括：
 
 ```text
 data/ckpt/TIGER_<category>/genrec_default_ori.pth
@@ -318,59 +355,71 @@ outputs/logs/
 outputs/tensorboard/
 ```
 
-`results/` and `outputs/` are intentionally git-ignored.
+其中 `results/` 和 `outputs/` 已加入忽略规则，不会作为仓库的一部分提交。
 
-## Troubleshooting
+## 可能遇到的问题
 
-### `FileNotFoundError: genrec_default_ori.pth`
+### 找不到 `genrec_default_ori.pth`
 
-The base TIGER checkpoint is missing. Train the recommender first or copy a checkpoint into:
+说明基础推荐模型尚未训练完成，或者权重没有放到约定路径下。需要先完成训练，或手动将 checkpoint 放到：
 
 ```text
 data/ckpt/TIGER_<category>/genrec_default_ori.pth
 ```
 
-### Missing `sentence-t5-base.sent_emb`
+### 缺少 `sentence-t5-base.sent_emb`
 
-The processed dataset cache is incomplete. Populate:
+说明处理后的缓存不完整。至少需要补齐：
 
 ```text
 data/cache/AmazonReviews2023/<category>/processed/sentence-t5-base.sent_emb
 ```
 
-### Script runs only one category
+### 脚本只跑了一个类别
 
-Pass categories explicitly:
+可以直接把类别作为参数传入：
 
 ```bash
 bash Scripts/prepare_data.sh Video_Games Software
 bash Scripts/edit.sh Video_Games
 ```
 
-or export:
+或者提前设置：
 
 ```bash
 export CATEGORIES="Video_Games Software"
 ```
 
-### CUDA out of memory
+### CUDA 显存不足
 
-Reduce batch-related settings in the model config, reduce the category sampling ratio, or use a larger GPU.
+可以从三处入手：
 
-### Torch installation mismatch
+- 调小模型相关 batch 配置；
+- 调低类别采样比例；
+- 更换显存更大的 GPU。
 
-If `pip install -e .` cannot find the correct CUDA wheels, install PyTorch first using the official wheel index, then reinstall the package.
+### `pip install -e .` 时 PyTorch 版本不匹配
 
-## Research Notes and Limitations
+优先按官方 CUDA wheel 方式先装好 PyTorch，再执行：
 
-- The codebase is research-oriented and still carries some project-specific assumptions.
-- The primary reproducible path in this package is the TIGER-based cold-start workflow.
-- Some auxiliary notebooks are preserved as research records rather than polished production utilities.
-- Large pretrained weights and caches are not versioned in this repository.
+```bash
+pip install -e .
+```
 
-## Citation
+## 项目边界与说明
 
-If this repository helps your research, please cite:
+这个仓库仍然保留了研究项目的一些特征，因此有几个边界需要说明：
+
+- 它首先是研究代码，其次才是通用工具库；
+- 主要公开的是 TIGER-based 的一条复现链路；
+- notebook 被保留下来，是为了保留研究轨迹，不代表它们是最推荐的使用入口；
+- 大模型权重、缓存与大体积编辑产物不在这个公开仓库中分发。
+
+如果你把这个项目当作简历或主页项目来看，我更希望它被理解为：**我不仅做了方法，还把方法放进了一个别人可以读懂、装起来、接着跑的工程骨架里。**
+
+## 引用
+
+如果这个项目对你的研究有帮助，可以引用：
 
 ```bibtex
 @article{shen2026bringing,

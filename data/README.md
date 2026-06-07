@@ -1,24 +1,62 @@
-# Data Layout
+# `data/` 目录说明
 
-This repository keeps the expected `data/` directory layout so the provided scripts can run with minimal path editing.
+这个目录在公开仓库里主要承担两个作用：
 
-What is intentionally not included:
+- 保留项目运行时所依赖的目录结构；
+- 明确告诉读者哪些文件路径是必需的、哪些文件内容并未随仓库分发。
 
-- full pretrained TIGER checkpoints
-- processed Amazon Reviews caches
-- tensorboard logs and training outputs
-- large generated edit artifacts
+也就是说，`data/` 的重点是**路径约定**，不是**实验资产托管**。
 
-What is included:
+## 这里故意没有包含什么
 
-- lightweight placeholder paths under `data/ckpt/`
-- example request-file locations under `data/Edit/`
-- plain-text or JSON placeholder files that preserve expected filenames but are not runnable artifacts
+以下内容没有作为真实产物放进仓库：
 
-To reproduce the workflow, populate:
+- 完整的 TIGER 预训练权重；
+- 完整的 Amazon Reviews 处理后缓存；
+- TensorBoard 日志与训练输出；
+- 大体积编辑请求文件与实验结果文件。
+
+原因很直接：这些内容体积大、依赖环境强，而且对公开阅读来说，真正重要的是“项目怎么组织”和“别人应该把文件放在哪里”，而不是把所有二进制资产一并塞进版本库。
+
+## 这里实际包含什么
+
+当前仓库里保留了两类占位内容：
+
+- `data/ckpt/` 下的 checkpoint 同名占位文件；
+- `data/Edit/` 下的请求文件同名占位文件。
+
+这些文件的作用只有一个：告诉使用者**真实文件应该放在什么路径、用什么名字**。它们本身不是可以直接用于训练或编辑的真实实验产物。
+
+## 如果要真正复现流程，需要补齐什么
+
+至少需要准备以下内容：
 
 - `data/ckpt/TIGER_<category>/genrec_default_ori.pth`
 - `data/cache/AmazonReviews2023/<category>/processed/`
 - `data/Edit/<category>/edit_requests_*.json`
 
-The scripts in `Scripts/` and the commands in the main `README.md` assume this layout.
+如果缺少这些文件，脚本虽然能跑到检查路径的阶段，但无法完成完整实验。
+
+## 为什么不直接上传真实大文件
+
+这是一个有意的公开化取舍。
+
+如果把真实权重、缓存和大体积中间文件全部上传，仓库会出现几个问题：
+
+- 首次 clone 成本很高；
+- 版本管理会被实验产物主导；
+- 外部读者更难区分“源码”和“结果缓存”；
+- 后续维护会明显变重。
+
+因此这里采用的是更适合公开项目的方式：**保留结构，省略重资产，用文档把边界说清楚。**
+
+## 配合哪些脚本使用
+
+这个目录约定默认与以下入口配套：
+
+- `Scripts/rec_train.sh`
+- `Scripts/prepare_data.sh`
+- `Scripts/edit.sh`
+- `README.md` 中列出的命令
+
+如果你后续要扩展更多类别、接入自己的数据，建议优先保持这套路径约定不变。这样能最大程度复用现有脚本，而不需要到处改硬编码路径。
