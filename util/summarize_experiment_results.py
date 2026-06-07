@@ -10,6 +10,16 @@ RESULT_PATTERN = re.compile(
 )
 
 
+def describe_status(status: str) -> str:
+    mapping = {
+        "ok": "已完成",
+        "missing_log": "缺少日志",
+        "missing_test_results": "缺少评测结果",
+        "missing": "缺失",
+    }
+    return mapping.get(status, status)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Parse GREdit evaluation logs and build a compact result table."
@@ -73,20 +83,20 @@ def build_payload(result_specs: list[tuple[str, Path]]) -> dict:
 
 def build_markdown(payload: dict) -> str:
     lines = [
-        "# GREdit Experiment Results",
+        "# GREdit 实验结果",
         "",
         "| 设置 | 状态 | iid_ratio@10 | ndcg@10 | 日志 |",
         "| --- | --- | ---: | ---: | --- |",
     ]
     rows = payload.get("results") or []
     if not rows:
-        lines.append("| none | missing |  |  |  |")
+        lines.append("| none | 缺失 |  |  |  |")
     else:
         for row in rows:
             iid_ratio = "" if row["iid_ratio@10"] is None else row["iid_ratio@10"]
             ndcg = "" if row["ndcg@10"] is None else row["ndcg@10"]
             lines.append(
-                f"| {row['label']} | {row['status']} | {iid_ratio} | {ndcg} | `{row['log_path']}` |"
+                f"| {row['label']} | {describe_status(row['status'])} | {iid_ratio} | {ndcg} | `{row['log_path']}` |"
             )
     return "\n".join(lines) + "\n"
 

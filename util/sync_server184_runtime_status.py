@@ -76,22 +76,28 @@ def parse_runtime_output(text: str) -> dict:
 
 
 def build_markdown(payload: dict) -> str:
+    stage_labels = {
+        "waiting_for_deltaW": "等待 deltaW 文件生成",
+        "running_eval": "正在执行评测",
+        "done": "评测已完成",
+    }
+    watcher_stage = payload.get("watcher_stage")
     lines = [
-        "# GREdit Runtime Status",
+        "# GREdit 运行状态",
         "",
-        f"- edit_pid: `{payload.get('edit_pid')}`",
-        f"- watcher_pid: `{payload.get('watcher_pid')}`",
-        f"- watcher_stage: `{payload.get('watcher_stage')}`",
-        f"- deltaW_exists: `{payload.get('deltaw_exists')}`",
-        f"- solve_progress: `{payload.get('solve_progress')}`",
+        f"- 编辑进程 PID: `{payload.get('edit_pid')}`",
+        f"- watcher 进程 PID: `{payload.get('watcher_pid')}`",
+        f"- watcher 阶段: `{stage_labels.get(watcher_stage, watcher_stage)}`",
+        f"- deltaW 是否已生成: `{payload.get('deltaw_exists')}`",
+        f"- solve 总进度: `{payload.get('solve_progress')}`",
     ]
     batch = payload.get("position_batch_progress") or {}
     lines.append(
-        f"- current_position_batch_progress: `position={batch.get('position')}` `percent={batch.get('percent')}`"
+        f"- 当前 position 批次进度: `position={batch.get('position')}` `percent={batch.get('percent')}`"
         if batch
-        else "- current_position_batch_progress: `unknown`"
+        else "- 当前 position 批次进度: `unknown`"
     )
-    lines.extend(["", "## Tail Excerpt"])
+    lines.extend(["", "## 日志尾部摘录"])
     for entry in payload.get("tail_excerpt") or []:
         lines.append(f"- {entry}")
     return "\n".join(lines) + "\n"

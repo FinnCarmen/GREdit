@@ -45,6 +45,28 @@ def metric_delta(baseline: dict | None, candidate: dict | None, key: str) -> flo
     return right - left
 
 
+def describe_status(status: str | None) -> str:
+    mapping = {
+        "ok": "已完成",
+        "missing": "缺失",
+        "missing_log": "缺少日志",
+        "missing_test_results": "缺少评测结果",
+    }
+    return mapping.get(status or "", status or "未知")
+
+
+def describe_judgement(judgement: str) -> str:
+    mapping = {
+        "baseline_reference": "基线参考",
+        "pending": "待评测",
+        "incomplete": "结果不完整",
+        "improved_or_tied": "不低于基线",
+        "both_lower_than_baseline": "两项指标均低于基线",
+        "mixed": "相对基线有取舍",
+    }
+    return mapping.get(judgement, judgement)
+
+
 def judge_row(baseline: dict | None, candidate: dict | None) -> str:
     if not candidate or candidate.get("status") != "ok":
         return "pending"
@@ -83,16 +105,16 @@ def build_summary(payload: dict) -> dict:
     micro10_status = judge_row(baseline, micro10)
     aug10_status = judge_row(baseline, aug10)
     if aug10_status == "pending":
-        headline = "Formal aug10 evaluation is still pending; current evidence comes from baseline and micro10 only."
+        headline = "正式 aug10 评测仍在进行中，当前公开证据仅来自 baseline 与 micro10。"
     elif aug10_status == "improved_or_tied":
-        headline = "Formal aug10 evaluation is available and does not underperform baseline on the tracked metrics."
+        headline = "正式 aug10 评测结果已生成，当前跟踪的两项指标均未低于 baseline。"
     elif aug10_status == "both_lower_than_baseline":
-        headline = "Formal aug10 evaluation is available and both tracked metrics are lower than baseline."
+        headline = "正式 aug10 评测结果已生成，当前跟踪的两项指标均低于 baseline。"
     else:
-        headline = "Formal aug10 evaluation is available, but the tradeoff against baseline is mixed or incomplete."
+        headline = "正式 aug10 评测结果已生成，但相对 baseline 仍呈现混合取舍，或结果尚不完整。"
 
     if micro10_status == "both_lower_than_baseline":
-        headline += " Micro10 remains below baseline on both tracked metrics."
+        headline += " 目前 micro10 在两项跟踪指标上也仍低于 baseline。"
 
     return {
         "headline": headline,
@@ -103,21 +125,21 @@ def build_summary(payload: dict) -> dict:
 
 def build_markdown(payload: dict) -> str:
     lines = [
-        "# GREdit Experiment Summary",
+        "# GREdit 实验摘要",
         "",
         payload["headline"],
         "",
-        "| 设置 | 状态 | iid_ratio@10 | ndcg@10 | iid delta vs baseline | ndcg delta vs baseline | 判断 |",
+        "| 设置 | 状态 | iid_ratio@10 | ndcg@10 | 相对 baseline 的 iid 变化 | 相对 baseline 的 ndcg 变化 | 结论 |",
         "| --- | --- | ---: | ---: | ---: | ---: | --- |",
     ]
     for row in payload.get("summary_rows") or []:
         lines.append(
-            f"| {row['label']} | {row['status']} | "
+            f"| {row['label']} | {describe_status(row['status'])} | "
             f"{'' if row['iid_ratio@10'] is None else row['iid_ratio@10']} | "
             f"{'' if row['ndcg@10'] is None else row['ndcg@10']} | "
             f"{'' if row['iid_ratio_delta_vs_baseline'] is None else row['iid_ratio_delta_vs_baseline']} | "
             f"{'' if row['ndcg_delta_vs_baseline'] is None else row['ndcg_delta_vs_baseline']} | "
-            f"{row['judgement']} |"
+            f"{describe_judgement(row['judgement'])} |"
         )
     return "\n".join(lines) + "\n"
 

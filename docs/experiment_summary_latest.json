@@ -1,5 +1,5 @@
 {
-  "headline": "Formal aug10 evaluation is still pending; current evidence comes from baseline and micro10 only. Micro10 remains below baseline on both tracked metrics.",
+  "headline": "正式 aug10 评测仍在进行中，当前公开证据仅来自 baseline 与 micro10。 目前 micro10 在两项跟踪指标上也仍低于 baseline。",
   "source_results_json": {
     "ssh_target": "grf@172.31.233.184",
     "ssh_port": 50805,

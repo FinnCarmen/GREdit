@@ -1,9 +1,9 @@
-# GREdit Experiment Summary
+# GREdit 实验摘要
 
-Formal aug10 evaluation is still pending; current evidence comes from baseline and micro10 only. Micro10 remains below baseline on both tracked metrics.
+正式 aug10 评测仍在进行中，当前公开证据仅来自 baseline 与 micro10。 目前 micro10 在两项跟踪指标上也仍低于 baseline。
 
-| 设置 | 状态 | iid_ratio@10 | ndcg@10 | iid delta vs baseline | ndcg delta vs baseline | 判断 |
+| 设置 | 状态 | iid_ratio@10 | ndcg@10 | 相对 baseline 的 iid 变化 | 相对 baseline 的 ndcg 变化 | 结论 |
 | --- | --- | ---: | ---: | ---: | ---: | --- |
-| baseline | ok | 0.6306354999542236 | 0.0022662023548036814 | 0.0 | 0.0 | baseline_reference |
-| micro10 | ok | 0.6302555561065674 | 0.002245022216811776 | -0.0003799438476562722 | -2.1180137991905212e-05 | both_lower_than_baseline |
-| aug10 | missing_log |  |  |  |  | pending |
+| baseline | 已完成 | 0.6306354999542236 | 0.0022662023548036814 | 0.0 | 0.0 | 基线参考 |
+| micro10 | 已完成 | 0.6302555561065674 | 0.002245022216811776 | -0.0003799438476562722 | -2.1180137991905212e-05 | 两项指标均低于基线 |
+| aug10 | 缺少日志 |  |  |  |  | 待评测 |
