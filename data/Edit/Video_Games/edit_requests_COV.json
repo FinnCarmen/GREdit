@@ -1,0 +1,5 @@
+{
+  "placeholder": true,
+  "file": "edit_requests_COV.json",
+  "note": "This repository preserves the expected path only. Generate the real edit requests locally before running the pipeline."
+}

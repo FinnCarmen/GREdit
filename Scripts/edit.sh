@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+cd "${REPO_ROOT}"
+
+export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"
+cls_model_path=""
+
+if [[ $# -gt 0 ]]; then
+  CATEGORIES=("$@")
+elif [[ -n "${CATEGORIES:-}" ]]; then
+  # shellcheck disable=SC2206
+  CATEGORIES=(${CATEGORIES})
+else
+  CATEGORIES=(Cell_Phones_and_Accessories)
+fi
+
+if [[ -n "${EDIT_POSTFIXES:-}" ]]; then
+  # shellcheck disable=SC2206
+  EDIT_POSTFIXES=(${EDIT_POSTFIXES})
+else
+  EDIT_POSTFIXES=(cold_test_augmented)
+fi
+
+if [[ -n "${COV_LAMBDAS:-}" ]]; then
+  # shellcheck disable=SC2206
+  COV_LAMBDAS=(${COV_LAMBDAS})
+else
+  COV_LAMBDAS=(1000)
+fi
+
+if [[ -n "${NUMBER_KNOWLEDGES:-}" ]]; then
+  # shellcheck disable=SC2206
+  NUMBER_KNOWLEDGES=(${NUMBER_KNOWLEDGES})
+else
+  NUMBER_KNOWLEDGES=(10)
+fi
+
+if [[ -n "${POS2LAYER:-}" ]]; then
+  # shellcheck disable=SC2206
+  POS2LAYER=(${POS2LAYER})
+else
+  POS2LAYER=(0 1 2 3)
+fi
+
+POS2LAYER_CONFIG="["
+for idx in "${!POS2LAYER[@]}"; do
+  if [[ "${idx}" -gt 0 ]]; then
+    POS2LAYER_CONFIG+=", "
+  fi
+  POS2LAYER_CONFIG+="${POS2LAYER[$idx]}"
+done
+POS2LAYER_CONFIG+="]"
+
+for category in "${CATEGORIES[@]}"; do
+
+  if [[ "$category" == "Video_Games" ]]; then
+    max_rows=0.5
+  elif [[ "$category" == "Cell_Phones_and_Accessories" ]]; then
+    max_rows=0.1
+  elif [[ "$category" == "Software" ]]; then
+    max_rows=0.5
+  else
+    echo "Unknown category: $category"
+    exit 1
+  fi
+
+  for edit_request_postfix in "${EDIT_POSTFIXES[@]}"; do
+    for cov_lambda in "${COV_LAMBDAS[@]}"; do
+      for number_knowledge in "${NUMBER_KNOWLEDGES[@]}"; do
+        echo "===== postfix=${edit_request_postfix}  cov_lambda=${cov_lambda} ====="
+        python edit_main.py \
+          --category="${category}"\
+          --pretrained_model_path="data/ckpt/TIGER_${category}/genrec_default_ori.pth"\
+          --cov_lambda="${cov_lambda}" \
+          --number_knowledge="${number_knowledge}"\
+          --pos2layer "${POS2LAYER[@]}" \
+          --covariance_data_file="data/Edit/${category}/edit_requests_COV.json" \
+          --edit_requests_file="data/Edit/${category}/edit_requests_${edit_request_postfix}_${number_knowledge}.json" \
+          --edit_name="edit_requests_${edit_request_postfix}"\
+          --cache_dir="data/cache/"\
+          --log_dir="outputs/logs/"\
+          --tensorboard_log_dir="outputs/tensorboard/"\
+          --max_rows="${max_rows}"
+
+        python rec_main.py \
+          --category="${category}"\
+          --pretrained_model_path="data/ckpt/TIGER_${category}/genrec_default_ori.pth"\
+          --deltaW_path="results/${category}/deltaW_edit_requests_${edit_request_postfix}_${cov_lambda}_${number_knowledge}.pt"\
+          --cls_model_path="${cls_model_path}"\
+          --cache_dir="data/cache/"\
+          --log_dir="outputs/logs/"\
+          --tensorboard_log_dir="outputs/tensorboard/"\
+          --pos2layer="${POS2LAYER_CONFIG}"\
+          --max_rows="${max_rows}"
+      done
+    done
+  done
+done

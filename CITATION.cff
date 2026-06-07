@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+title: GREdit
+message: If you use this repository, please cite the accompanying paper.
+type: software
+preferred-citation:
+  type: article
+  title: Bringing Model Editing to Generative Recommendation in Cold-Start Scenarios
+  authors:
+    - family-names: Shen
+      given-names: Chenglei
+    - family-names: Shi
+      given-names: Teng
+    - family-names: Yu
+      given-names: Weijie
+    - family-names: Zhang
+      given-names: Xiao
+    - family-names: Xu
+      given-names: Jun
+  journal: arXiv preprint arXiv:2603.14259
+  year: 2026

@@ -1,0 +1,4 @@
+PLACEHOLDER CHECKPOINT FILE
+category=Video_Games
+This repository does not ship pretrained TIGER weights.
+Place the real checkpoint here and keep the filename as genrec_default_ori.pth.
