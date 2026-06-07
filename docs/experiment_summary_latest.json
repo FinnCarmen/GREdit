@@ -1,0 +1,37 @@
+{
+  "headline": "Formal aug10 evaluation is still pending; current evidence comes from baseline and micro10 only. Micro10 remains below baseline on both tracked metrics.",
+  "source_results_json": {
+    "ssh_target": "grf@172.31.233.184",
+    "ssh_port": 50805,
+    "remote_base": "/home/grf/GenRecEdit-main/outputs/logs"
+  },
+  "summary_rows": [
+    {
+      "label": "baseline",
+      "status": "ok",
+      "iid_ratio@10": 0.6306354999542236,
+      "ndcg@10": 0.0022662023548036814,
+      "iid_ratio_delta_vs_baseline": 0.0,
+      "ndcg_delta_vs_baseline": 0.0,
+      "judgement": "baseline_reference"
+    },
+    {
+      "label": "micro10",
+      "status": "ok",
+      "iid_ratio@10": 0.6302555561065674,
+      "ndcg@10": 0.002245022216811776,
+      "iid_ratio_delta_vs_baseline": -0.0003799438476562722,
+      "ndcg_delta_vs_baseline": -2.1180137991905212e-05,
+      "judgement": "both_lower_than_baseline"
+    },
+    {
+      "label": "aug10",
+      "status": "missing_log",
+      "iid_ratio@10": null,
+      "ndcg@10": null,
+      "iid_ratio_delta_vs_baseline": null,
+      "ndcg_delta_vs_baseline": null,
+      "judgement": "pending"
+    }
+  ]
+}
