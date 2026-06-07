@@ -40,6 +40,7 @@ def parse_runtime_output(text: str) -> dict:
         "edit_pid": None,
         "watcher_pid": None,
         "deltaw_exists": False,
+        "watcher_stage": None,
         "solve_progress": None,
         "position_batch_progress": None,
         "tail_excerpt": [],
@@ -53,6 +54,9 @@ def parse_runtime_output(text: str) -> dict:
             data["watcher_pid"] = int(value) if value.isdigit() else None
         elif line.startswith("DELTAW_EXISTS="):
             data["deltaw_exists"] = line.split("=", 1)[1].strip() == "1"
+        elif line.startswith("WATCHER_STAGE="):
+            value = line.split("=", 1)[1].strip()
+            data["watcher_stage"] = value or None
         elif line.startswith("TAIL="):
             data["tail_excerpt"].append(line.split("=", 1)[1])
 
@@ -77,6 +81,7 @@ def build_markdown(payload: dict) -> str:
         "",
         f"- edit_pid: `{payload.get('edit_pid')}`",
         f"- watcher_pid: `{payload.get('watcher_pid')}`",
+        f"- watcher_stage: `{payload.get('watcher_stage')}`",
         f"- deltaW_exists: `{payload.get('deltaw_exists')}`",
         f"- solve_progress: `{payload.get('solve_progress')}`",
     ]
@@ -105,6 +110,19 @@ fi
 echo "EDIT_PID=${EDIT_PID}"
 echo "WATCHER_PID=${WATCHER_PID}"
 echo "DELTAW_EXISTS=${DELTAW_EXISTS}"
+if [ -f /home/grf/GenRecEdit-main/outputs/logs/genrecedit_aug10_eval_watcher_status.json ]; then
+  WATCHER_STAGE=$(python3 - <<'PY'
+import json
+from pathlib import Path
+path = Path('/home/grf/GenRecEdit-main/outputs/logs/genrecedit_aug10_eval_watcher_status.json')
+payload = json.loads(path.read_text(encoding='utf-8'))
+print(payload.get('stage', ''))
+PY
+)
+else
+  WATCHER_STAGE=""
+fi
+echo "WATCHER_STAGE=${WATCHER_STAGE}"
 python3 - <<'PY'
 import re
 from pathlib import Path
