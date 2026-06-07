@@ -28,6 +28,7 @@ def main() -> None:
     args = parse_args()
     repo_root = args.repo_root.resolve()
     python_exe = sys.executable
+    run_step([python_exe, str(repo_root / "util" / "sync_server184_runtime_status.py")], repo_root)
 
     run_step([python_exe, str(repo_root / "util" / "sync_server184_results.py")], repo_root)
     run_step([python_exe, str(repo_root / "util" / "build_experiment_summary.py")], repo_root)
